@@ -33,7 +33,7 @@ export class Oai2OllamaService implements vscode.Disposable {
         const isPortOccupied = await this.checkPortOccupied(port);
         if (isPortOccupied) {
             const action = await vscode.window.showErrorMessage(
-                localize('service.portInUse', `Port ${port} is already in use. Another process may be using it.`),
+                localize('service.portInUse', 'Port {0} is already in use. Another process may be using it.', port),
                 localize('action.killProcess', 'Kill Process'),
                 localize('action.cancel', 'Cancel')
             );
@@ -46,7 +46,7 @@ export class Oai2OllamaService implements vscode.Disposable {
                 // Check again if port is still occupied
                 const stillOccupied = await this.checkPortOccupied(port);
                 if (stillOccupied) {
-                    vscode.window.showErrorMessage(localize('service.portStillOccupied', `Port ${port} is still occupied. Please free the port manually.`));
+                    vscode.window.showErrorMessage(localize('service.portStillOccupied', 'Port {0} is still occupied. Please free the port manually.', port));
                     return;
                 }
             } else {
@@ -58,7 +58,7 @@ export class Oai2OllamaService implements vscode.Disposable {
             await this.startService();
             vscode.window.showInformationMessage(localize('service.started', 'Oai2Ollama service started successfully'));
         } catch (error) {
-            vscode.window.showErrorMessage(localize('service.startFailed', `Failed to start Oai2Ollama service: ${error}`));
+            vscode.window.showErrorMessage(localize('service.startFailed', 'Failed to start Oai2Ollama service: {0}', error));
         }
     }
 
@@ -75,7 +75,7 @@ export class Oai2OllamaService implements vscode.Disposable {
             this.outputChannel.appendLine(localize('service.stoppedLog', 'Service stopped'));
             vscode.window.showInformationMessage(localize('service.stopped', 'Oai2Ollama service stopped'));
         } catch (error) {
-            vscode.window.showErrorMessage(localize('service.stopFailed', `Failed to stop service: ${error}`));
+            vscode.window.showErrorMessage(localize('service.stopFailed', 'Failed to stop service: {0}', error));
         }
     }
 
@@ -216,10 +216,10 @@ ${localize('status.availableEndpoints', 'Available Endpoints')}:
 
             child_process.exec(command, (error: child_process.ExecException | null) => {
                 if (error) {
-                    this.outputChannel.appendLine(localize('service.killFailed', `Failed to kill process on port ${port}: ${error.message}`));
+                    this.outputChannel.appendLine(localize('service.killFailed', 'Failed to kill process on port {0}: {1}', port, error.message));
                     reject(error);
                 } else {
-                    this.outputChannel.appendLine(localize('service.killed', `Killed process on port ${port}`));
+                    this.outputChannel.appendLine(localize('service.killed', 'Killed process on port {0}', port));
                     resolve();
                 }
             });

@@ -34,7 +34,7 @@ export class StatusBarManager implements vscode.Disposable {
             items.push(
                 {
                     label: `$(debug-stop) ${localize('quick.stop', 'Stop Service')}`,
-                    description: localize('quick.currentlyRunning', `Currently running on ${host}:${port}`),
+                    description: localize('quick.currentlyRunning', 'Currently running on {0}', `${host}:${port}`),
                     detail: localize('quick.stopDetail', 'Stop the Oai2Ollama service')
                 },
                 {
@@ -57,7 +57,7 @@ export class StatusBarManager implements vscode.Disposable {
             items.push(
                 {
                     label: `$(play) ${localize('quick.start', 'Start Service')}`,
-                    description: localize('quick.willStart', `Will start on ${host}:${port}`),
+                    description: localize('quick.willStart', 'Will start on {0}', `${host}:${port}`),
                     detail: localize('quick.startDetail', 'Start the Oai2Ollama service')
                 },
                 {

@@ -14,6 +14,8 @@
     "service.stoppedLog": "Service stopped",
     "service.stopped": "Oai2Ollama service stopped",
     "service.stopFailed": "Failed to stop service: {0}",
+    "service.killFailed": "Failed to kill process on port {0}: {1}",
+    "service.killed": "Killed process on port {0}",
     "status.running": "✓ Running",
     "status.stopped": "✗ Stopped",
     "status.title": "Oai2Ollama Service Status",

@@ -14,6 +14,8 @@
     "service.stoppedLog": "服务已停止",
     "service.stopped": "Oai2Ollama 服务已停止",
     "service.stopFailed": "停止服务失败：{0}",
+    "service.killFailed": "结束端口 {0} 上的进程失败：{1}",
+    "service.killed": "已结束端口 {0} 上的进程",
     "status.running": "✓ 运行中",
     "status.stopped": "✗ 已停止",
     "status.title": "Oai2Ollama 服务状态",
