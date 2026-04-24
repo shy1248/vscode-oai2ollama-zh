@@ -1,7 +1,10 @@
+declare const process: any;
+declare const setTimeout: any;
 import * as vscode from 'vscode';
 import * as child_process from 'child_process';
 import * as net from 'net';
 import { Oai2OllamaServer } from './server';
+import localize from './i18n/localize';
 
 export class Oai2OllamaService implements vscode.Disposable {
     private server: Oai2OllamaServer | null = null;
@@ -19,7 +22,7 @@ export class Oai2OllamaService implements vscode.Disposable {
 
     public async start(): Promise<void> {
         if (this.isRunning()) {
-            vscode.window.showWarningMessage('Oai2Ollama service is already running');
+            vscode.window.showWarningMessage(localize('service.alreadyRunning', 'Oai2Ollama service is already running'));
             return;
         }
 
@@ -30,20 +33,20 @@ export class Oai2OllamaService implements vscode.Disposable {
         const isPortOccupied = await this.checkPortOccupied(port);
         if (isPortOccupied) {
             const action = await vscode.window.showErrorMessage(
-                `Port ${port} is already in use. Another process may be using it.`,
-                'Kill Process',
-                'Cancel'
+                localize('service.portInUse', `Port ${port} is already in use. Another process may be using it.`),
+                localize('action.killProcess', 'Kill Process'),
+                localize('action.cancel', 'Cancel')
             );
 
-            if (action === 'Kill Process') {
+            if (action === localize('action.killProcess', 'Kill Process')) {
                 await this.killProcessOnPort(port);
                 // Wait a bit for the port to be released
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                await new Promise<void>((resolve) => setTimeout(resolve, 1000));
 
                 // Check again if port is still occupied
                 const stillOccupied = await this.checkPortOccupied(port);
                 if (stillOccupied) {
-                    vscode.window.showErrorMessage(`Port ${port} is still occupied. Please free the port manually.`);
+                    vscode.window.showErrorMessage(localize('service.portStillOccupied', `Port ${port} is still occupied. Please free the port manually.`));
                     return;
                 }
             } else {
@@ -53,15 +56,15 @@ export class Oai2OllamaService implements vscode.Disposable {
 
         try {
             await this.startService();
-            vscode.window.showInformationMessage('Oai2Ollama service started successfully');
+            vscode.window.showInformationMessage(localize('service.started', 'Oai2Ollama service started successfully'));
         } catch (error) {
-            vscode.window.showErrorMessage(`Failed to start Oai2Ollama service: ${error}`);
+            vscode.window.showErrorMessage(localize('service.startFailed', `Failed to start Oai2Ollama service: ${error}`));
         }
     }
 
     public async stop(): Promise<void> {
         if (!this.isRunning()) {
-            vscode.window.showWarningMessage('Oai2Ollama service is not running');
+            vscode.window.showWarningMessage(localize('service.notRunning', 'Oai2Ollama service is not running'));
             return;
         }
 
@@ -69,10 +72,10 @@ export class Oai2OllamaService implements vscode.Disposable {
             await this.server?.stop();
             this.server = null;
             this.statusChangeEmitter.fire(false);
-            this.outputChannel.appendLine('Service stopped');
-            vscode.window.showInformationMessage('Oai2Ollama service stopped');
+            this.outputChannel.appendLine(localize('service.stoppedLog', 'Service stopped'));
+            vscode.window.showInformationMessage(localize('service.stopped', 'Oai2Ollama service stopped'));
         } catch (error) {
-            vscode.window.showErrorMessage(`Failed to stop service: ${error}`);
+            vscode.window.showErrorMessage(localize('service.stopFailed', `Failed to stop service: ${error}`));
         }
     }
 
@@ -80,7 +83,7 @@ export class Oai2OllamaService implements vscode.Disposable {
         if (this.isRunning()) {
             await this.stop();
             // Wait a bit before restarting
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise<void>((resolve) => setTimeout(resolve, 1000));
         }
         await this.start();
     }
@@ -94,27 +97,27 @@ export class Oai2OllamaService implements vscode.Disposable {
         const capabilities = config.get<string[]>('capabilities', []);
         const models = config.get<string[]>('models', []);
 
-        const status = this.isRunning() ? '✓ Running' : '✗ Stopped';
+        const status = this.isRunning() ? localize('status.running', '✓ Running') : localize('status.stopped', '✗ Stopped');
         const portStatus = await this.checkPortOccupied(port);
 
         const statusMessage = `
-Oai2Ollama Service Status
+${localize('status.title', 'Oai2Ollama Service Status')}
 ========================
-Status: ${status}
-Port: ${port} ${portStatus ? '(occupied)' : '(available)'}
-Host: ${host}
-Server URL: http://${host}:${port}
-Base URL: ${baseUrl || '(not configured)'}
-API Key: ${apiKey ? '***configured***' : '(not configured)'}
-Capabilities: ${capabilities.length > 0 ? capabilities.join(', ') : 'none'}
-Extra Models: ${models.length > 0 ? models.join(', ') : 'none'}
+${localize('status.label', 'Status')}: ${status}
+${localize('status.port', 'Port')}: ${port} ${portStatus ? `(${localize('status.occupied', 'occupied')})` : `(${localize('status.available', 'available')})`}
+${localize('status.host', 'Host')}: ${host}
+${localize('status.serverUrl', 'Server URL')}: http://${host}:${port}
+${localize('status.baseUrl', 'Base URL')}: ${baseUrl || `(${localize('status.notConfigured', 'not configured')})`}
+${localize('status.apiKey', 'API Key')}: ${apiKey ? '***configured***' : `(${localize('status.notConfigured', 'not configured')})`}
+${localize('status.capabilities', 'Capabilities')}: ${capabilities.length > 0 ? capabilities.join(', ') : localize('status.none', 'none')}
+${localize('status.extraModels', 'Extra Models')}: ${models.length > 0 ? models.join(', ') : localize('status.none', 'none')}
 
-Available Endpoints:
-  - GET  http://${host}:${port}/api/tags          - List models (Ollama format)
-  - POST http://${host}:${port}/api/show          - Show model capabilities
-  - GET  http://${host}:${port}/api/version       - Get version info
-  - GET  http://${host}:${port}/v1/models         - List models (OpenAI format)
-  - POST http://${host}:${port}/v1/chat/completions - Chat completions
+${localize('status.availableEndpoints', 'Available Endpoints')}:
+    - GET  http://${host}:${port}/api/tags          - ${localize('endpoints.tags', 'List models (Ollama format)')}
+    - POST http://${host}:${port}/api/show          - ${localize('endpoints.show', 'Show model capabilities')}
+    - GET  http://${host}:${port}/api/version       - ${localize('endpoints.version', 'Get version info')}
+    - GET  http://${host}:${port}/v1/models         - ${localize('endpoints.models', 'List models (OpenAI format)')}
+    - POST http://${host}:${port}/v1/chat/completions - ${localize('endpoints.chat', 'Chat completions')}
 `.trim();
 
         this.outputChannel.clear();
@@ -181,11 +184,11 @@ Available Endpoints:
     }
 
     private async checkPortOccupied(port: number): Promise<boolean> {
-        return new Promise((resolve) => {
+        return new Promise<boolean>((resolve) => {
             const server = net.createServer();
 
-            server.once('error', (err: NodeJS.ErrnoException) => {
-                if (err.code === 'EADDRINUSE') {
+            server.once('error', (err: any) => {
+                if (err && err.code === 'EADDRINUSE') {
                     resolve(true);
                 } else {
                     resolve(false);
@@ -202,7 +205,7 @@ Available Endpoints:
     }
 
     private async killProcessOnPort(port: number): Promise<void> {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             let command: string;
 
             if (process.platform === 'win32') {
@@ -211,12 +214,12 @@ Available Endpoints:
                 command = `lsof -ti:${port} | xargs kill -9`;
             }
 
-            child_process.exec(command, (error) => {
+            child_process.exec(command, (error: child_process.ExecException | null) => {
                 if (error) {
-                    this.outputChannel.appendLine(`Failed to kill process on port ${port}: ${error.message}`);
+                    this.outputChannel.appendLine(localize('service.killFailed', `Failed to kill process on port ${port}: ${error.message}`));
                     reject(error);
                 } else {
-                    this.outputChannel.appendLine(`Killed process on port ${port}`);
+                    this.outputChannel.appendLine(localize('service.killed', `Killed process on port ${port}`));
                     resolve();
                 }
             });

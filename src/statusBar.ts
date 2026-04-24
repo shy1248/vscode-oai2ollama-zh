@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { Oai2OllamaService } from './service';
+import localize from './i18n/localize';
 
 export class StatusBarManager implements vscode.Disposable {
     private statusBarItem: vscode.StatusBarItem;
@@ -32,42 +33,42 @@ export class StatusBarManager implements vscode.Disposable {
         if (isRunning) {
             items.push(
                 {
-                    label: '$(debug-stop) Stop Service',
-                    description: `Currently running on ${host}:${port}`,
-                    detail: 'Stop the Oai2Ollama service'
+                    label: `$(debug-stop) ${localize('quick.stop', 'Stop Service')}`,
+                    description: localize('quick.currentlyRunning', `Currently running on ${host}:${port}`),
+                    detail: localize('quick.stopDetail', 'Stop the Oai2Ollama service')
                 },
                 {
-                    label: '$(debug-restart) Restart Service',
-                    description: 'Restart with current configuration',
-                    detail: 'Stop and start the service again'
+                    label: `$(debug-restart) ${localize('quick.restart', 'Restart Service')}`,
+                    description: localize('quick.restartDesc', 'Restart with current configuration'),
+                    detail: localize('quick.restartDetail', 'Stop and start the service again')
                 },
                 {
-                    label: '$(info) Show Status',
-                    description: 'View detailed status information',
-                    detail: 'Open output channel with full status'
+                    label: `$(info) ${localize('quick.showStatus', 'Show Status')}`,
+                    description: localize('quick.showStatusDesc', 'View detailed status information'),
+                    detail: localize('quick.showStatusDetail', 'Open output channel with full status')
                 },
                 {
-                    label: '$(gear) Open Settings',
-                    description: 'Configure Oai2Ollama',
-                    detail: 'Open extension settings'
+                    label: `$(gear) ${localize('quick.openSettings', 'Open Settings')}`,
+                    description: localize('quick.openSettingsDesc', 'Configure Oai2Ollama'),
+                    detail: localize('quick.openSettingsDetail', 'Open extension settings')
                 }
             );
         } else {
             items.push(
                 {
-                    label: '$(play) Start Service',
-                    description: `Will start on ${host}:${port}`,
-                    detail: 'Start the Oai2Ollama service'
+                    label: `$(play) ${localize('quick.start', 'Start Service')}`,
+                    description: localize('quick.willStart', `Will start on ${host}:${port}`),
+                    detail: localize('quick.startDetail', 'Start the Oai2Ollama service')
                 },
                 {
-                    label: '$(info) Show Status',
-                    description: 'View detailed status information',
-                    detail: 'Open output channel with full status'
+                    label: `$(info) ${localize('quick.showStatus', 'Show Status')}`,
+                    description: localize('quick.showStatusDesc', 'View detailed status information'),
+                    detail: localize('quick.showStatusDetail', 'Open output channel with full status')
                 },
                 {
-                    label: '$(gear) Open Settings',
-                    description: 'Configure Oai2Ollama',
-                    detail: 'Open extension settings'
+                    label: `$(gear) ${localize('quick.openSettings', 'Open Settings')}`,
+                    description: localize('quick.openSettingsDesc', 'Configure Oai2Ollama'),
+                    detail: localize('quick.openSettingsDetail', 'Open extension settings')
                 }
             );
         }
@@ -75,9 +76,9 @@ export class StatusBarManager implements vscode.Disposable {
         // Show quick pick
         const selected = await vscode.window.showQuickPick(items, {
             placeHolder: isRunning
-                ? 'Oai2Ollama Service is Running'
-                : 'Oai2Ollama Service is Stopped',
-            title: 'Oai2Ollama Control Panel'
+                ? localize('quick.placeHolder.running', 'Oai2Ollama Service is Running')
+                : localize('quick.placeHolder.stopped', 'Oai2Ollama Service is Stopped'),
+            title: localize('quick.title', 'Oai2Ollama Control Panel')
         });
 
         if (!selected) {
@@ -85,15 +86,15 @@ export class StatusBarManager implements vscode.Disposable {
         }
 
         // Handle selection
-        if (selected.label.includes('Start')) {
+        if (selected.label.includes(localize('quick.start', 'Start Service'))) {
             await vscode.commands.executeCommand('oai2ollama.start');
-        } else if (selected.label.includes('Stop')) {
+        } else if (selected.label.includes(localize('quick.stop', 'Stop Service'))) {
             await vscode.commands.executeCommand('oai2ollama.stop');
-        } else if (selected.label.includes('Restart')) {
+        } else if (selected.label.includes(localize('quick.restart', 'Restart Service'))) {
             await vscode.commands.executeCommand('oai2ollama.restart');
-        } else if (selected.label.includes('Status')) {
+        } else if (selected.label.includes(localize('quick.showStatus', 'Show Status'))) {
             await vscode.commands.executeCommand('oai2ollama.showStatus');
-        } else if (selected.label.includes('Settings')) {
+        } else if (selected.label.includes(localize('quick.openSettings', 'Open Settings'))) {
             await vscode.commands.executeCommand('oai2ollama.openSettings');
         }
     }
@@ -104,11 +105,11 @@ export class StatusBarManager implements vscode.Disposable {
 
         if (this.service.isRunning()) {
             this.statusBarItem.text = `$(check) Oai2Ollama :${port}`;
-            this.statusBarItem.tooltip = 'Oai2Ollama service is running\nClick for quick actions';
+            this.statusBarItem.tooltip = localize('statusBar.runningTooltip', 'Oai2Ollama service is running\nClick for quick actions');
             this.statusBarItem.backgroundColor = undefined;
         } else {
             this.statusBarItem.text = `$(circle-slash) Oai2Ollama`;
-            this.statusBarItem.tooltip = 'Oai2Ollama service is stopped\nClick for quick actions';
+            this.statusBarItem.tooltip = localize('statusBar.stoppedTooltip', 'Oai2Ollama service is stopped\nClick for quick actions');
             this.statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.warningBackground');
         }
     }

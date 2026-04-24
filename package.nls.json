@@ -1,0 +1,17 @@
+{
+    "extension.displayName": "Oai2Ollama",
+    "extension.description": "Control oai2ollama service from VSCode",
+    "configuration.title": "Oai2Ollama",
+    "configuration.apiKey.description": "API key for authentication (can also use OPENAI_API_KEY env var)",
+    "configuration.baseUrl.description": "Base URL for the OpenAI-compatible API (can also use OPENAI_BASE_URL env var)",
+    "configuration.capabilities.description": "Extra capabilities to mark the model as supporting (completion is always included automatically)",
+    "configuration.models.description": "Extra models to include in the /api/tags response",
+    "configuration.autostart.descripton": "Automatically start oai2ollama service when VSCode starts",
+    "configuration.host.description": "IP / hostname for the API server",
+    "configuration.port.description": "Port for the API server",
+    "command.start": "Oai2Ollama: Start Service",
+    "command.stop": "Oai2Ollama: Stop Service",
+    "command.restart": "Oai2Ollama: Restart Service",
+    "command.showStatus": "Oai2Ollama: Show Status",
+    "command.openSettings": "Oai2Ollama: Open Settings"
+}

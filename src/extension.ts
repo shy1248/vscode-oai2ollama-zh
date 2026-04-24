@@ -1,12 +1,15 @@
+declare const process: any;
+declare const setTimeout: any;
 import * as vscode from 'vscode';
 import { Oai2OllamaService } from './service';
 import { StatusBarManager } from './statusBar';
+import localize from './i18n/localize';
 
 let service: Oai2OllamaService;
 let statusBar: StatusBarManager;
 
 export function activate(context: vscode.ExtensionContext) {
-    console.log('Oai2Ollama extension is now active');
+    console.log(localize('extension.activated', 'Oai2Ollama extension is now active'));
 
     // Initialize service and status bar
     service = new Oai2OllamaService();
@@ -58,18 +61,18 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Listen for configuration changes
     context.subscriptions.push(
-        vscode.workspace.onDidChangeConfiguration((e) => {
+        vscode.workspace.onDidChangeConfiguration((e: vscode.ConfigurationChangeEvent) => {
             if (e.affectsConfiguration('oai2ollama')) {
                 statusBar.update();
 
                 // If service is running, prompt to restart
                 if (service.isRunning()) {
                     vscode.window.showInformationMessage(
-                        'Oai2Ollama configuration changed. Restart service to apply changes?',
-                        'Restart',
-                        'Later'
-                    ).then(selection => {
-                        if (selection === 'Restart') {
+                        localize('configuration.changed.message', 'Oai2Ollama configuration changed. Restart service to apply changes?'),
+                        localize('action.restart', 'Restart'),
+                        localize('action.later', 'Later')
+                    ).then((selection: string | undefined) => {
+                        if (selection === localize('action.restart', 'Restart')) {
                             service.restart();
                         }
                     });
