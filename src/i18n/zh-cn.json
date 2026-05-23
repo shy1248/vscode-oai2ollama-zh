@@ -55,6 +55,6 @@
     "quick.placeHolder.running": "Oai2Ollama 服务正在运行",
     "quick.placeHolder.stopped": "Oai2Ollama 服务已停止",
     "quick.title": "Oai2Ollama 控制面板",
-    "statusBar.runningTooltip": "Oai2Ollama 服务正在运行\n单击以获取快捷操作",
+    "statusBar.runningTooltip": "Oai2Ollama 服务正在运行（端口：{0}）\n单击以获取快捷操作",
     "statusBar.stoppedTooltip": "Oai2Ollama 服务已停止\n单击以获取快捷操作"
 }

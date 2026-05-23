@@ -104,13 +104,13 @@ export class StatusBarManager implements vscode.Disposable {
         const port = config.get<number>('port', 11434);
 
         if (this.service.isRunning()) {
-            this.statusBarItem.text = `$(check) Oai2Ollama :${port}`;
-            this.statusBarItem.tooltip = localize('statusBar.runningTooltip', 'Oai2Ollama service is running\nClick for quick actions');
-            this.statusBarItem.backgroundColor = undefined;
+            this.statusBarItem.text = `$(star-full)`;
+            this.statusBarItem.tooltip = localize('statusBar.runningTooltip', 'Oai2Ollama service is running on port: {0}\nClick for quick actions', port);
+            // this.statusBarItem.backgroundColor = undefined;
         } else {
-            this.statusBarItem.text = `$(circle-slash) Oai2Ollama`;
+            this.statusBarItem.text = `$(star-empty)`;
             this.statusBarItem.tooltip = localize('statusBar.stoppedTooltip', 'Oai2Ollama service is stopped\nClick for quick actions');
-            this.statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.warningBackground');
+            // this.statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.warningBackground');
         }
     }
 

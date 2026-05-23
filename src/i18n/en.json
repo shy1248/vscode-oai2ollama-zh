@@ -55,6 +55,6 @@
     "quick.placeHolder.running": "Oai2Ollama Service is Running",
     "quick.placeHolder.stopped": "Oai2Ollama Service is Stopped",
     "quick.title": "Oai2Ollama Control Panel",
-    "statusBar.runningTooltip": "Oai2Ollama service is running\nClick for quick actions",
+    "statusBar.runningTooltip": "Oai2Ollama service is running on port: {0}\nClick for quick actions",
     "statusBar.stoppedTooltip": "Oai2Ollama service is stopped\nClick for quick actions"
 }
